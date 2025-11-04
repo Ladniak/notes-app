@@ -16,7 +16,7 @@ export default async function DashboardPage() {
         <div className="flex min-h-screen">
             <SideNav />
 
-            <main className="flex-1 p-6">
+            <div className="flex-1 p-6">
                 <section>
                     <h2 className="text-xl font-semibold mb-3">Your Tasks</h2>
                     {tasks.length === 0 ? (
@@ -40,7 +40,7 @@ export default async function DashboardPage() {
                         </ul>
                     )}
                 </section>
-            </main>
+            </div>
         </div>
     );
 }

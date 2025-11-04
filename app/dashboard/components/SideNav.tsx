@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { LogOut } from "lucide-react";
 
 export default function SideNav() {
     const pathname = usePathname();
@@ -17,14 +18,16 @@ export default function SideNav() {
     }
 
     return (
-        <div>
-            <nav className="w-64 h-screen bg-gray-100 p-4">
+        <div className="flex flex-col justify-between h-screen w-64 bg-gray-100 p-4">
+            <nav>
                 <ul className="space-y-3">
                     {navItems.map((item) => (
                         <li key={item.href}>
                             <Link
                                 href={item.href}
-                                className={`block p-2 rounded ${pathname === item.href ? "bg-blue-500 text-white" : "text-gray-700"
+                                className={`block p-2 rounded ${pathname === item.href
+                                    ? "bg-blue-500 text-white"
+                                    : "text-gray-700 hover:bg-blue-100"
                                     }`}
                             >
                                 {item.label}
@@ -33,8 +36,14 @@ export default function SideNav() {
                     ))}
                 </ul>
             </nav>
-            <button className="" onClick={handleSignOut}>Sign out</button>
-        </div>
 
+            <div className="flex justify-end">
+                <button
+                    onClick={handleSignOut}
+                >
+                    <LogOut size={24} strokeWidth={2} />
+                </button>
+            </div>
+        </div>
     );
 }

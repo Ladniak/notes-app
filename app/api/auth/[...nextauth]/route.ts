@@ -1,10 +1,10 @@
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import User from "@/models/User";
 import connectDB from "@/lib/db";
 
-export const authOptions = {
+export const authOptions: AuthOptions = {
   providers: [
     Credentials({
       name: "Credentials",
@@ -24,13 +24,34 @@ export const authOptions = {
         );
         if (!isValid) throw new Error("Invalid password");
 
-        return { id: user._id.toString(), name: user.name, email: user.email };
+        return {
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email,
+        };
       },
     }),
   ],
-  session: { strategy: "jwt" as "jwt" },
-  pages: { signIn: "/login" },
+  session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = (user as any).id ?? (user as any)._id ?? token.sub;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      session.user = {
+        ...session.user,
+        id: (token as any).id ?? (token as any).sub,
+      };
+      return session;
+    },
+  },
+  pages: {
+    signIn: "/login",
+  },
 };
 
 const handler = NextAuth(authOptions);

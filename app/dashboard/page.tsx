@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import SideNav from "../../components/SideNav";
 
 interface Task {
@@ -10,6 +11,7 @@ interface Task {
 }
 
 export default function DashboardPage() {
+    const router = useRouter();
     const [tasks, setTasks] = useState<Task[]>([]);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -21,8 +23,13 @@ export default function DashboardPage() {
 
     async function fetchTasks() {
         const res = await fetch("/api/tasks");
+        if (res.status === 401) {
+            router.push("/login");
+            return;
+        }
         const data = await res.json();
-        setTasks(data);
+        if (Array.isArray(data)) setTasks(data);
+        else setTasks([]); // безпечний fallback
     }
 
     async function handleSubmit(e: React.FormEvent) {
@@ -61,7 +68,10 @@ export default function DashboardPage() {
             <main className="flex-1 p-6 bg-gray-50">
                 <h2 className="text-2xl font-semibold mb-4">Your Tasks</h2>
 
-                <form onSubmit={handleSubmit} className="mb-6 space-y-3 bg-white p-4 rounded-lg shadow">
+                <form
+                    onSubmit={handleSubmit}
+                    className="mb-6 space-y-3 bg-white p-4 rounded-lg shadow"
+                >
                     <input
                         type="text"
                         placeholder="Task title"

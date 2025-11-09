@@ -14,19 +14,19 @@ export default function SideNav() {
     ];
 
     const handleSignOut = () => {
-        signOut({ callbackUrl: "/login" })
-    }
+        signOut({ callbackUrl: "/login" });
+    };
 
     return (
-        <div className="flex flex-col justify-between h-screen w-64 bg-gray-100 p-4">
-            <nav>
-                <ul className="space-y-3">
+        <aside className="flex flex-col justify-between h-screen w-64 bg-white  shadow-md sticky top-0">
+            <nav className="p-4">
+                <ul className="space-y-2">
                     {navItems.map((item) => (
                         <li key={item.href}>
                             <Link
                                 href={item.href}
-                                className={`block p-2 rounded ${pathname === item.href
-                                    ? "bg-blue-500 text-white"
+                                className={`block px-4 py-2 rounded-lg transition-colors duration-200 ${pathname === item.href
+                                    ? "bg-blue-600 text-white"
                                     : "text-gray-700 hover:bg-blue-100"
                                     }`}
                             >
@@ -37,13 +37,16 @@ export default function SideNav() {
                 </ul>
             </nav>
 
-            <div className="flex justify-end">
+            <div className="p-4  flex items-center justify-between text-gray-600">
+                <span className="text-sm font-medium">Logout</span>
                 <button
                     onClick={handleSignOut}
+                    className="p-2 rounded-lg hover:bg-red-100 hover:text-red-600 transition-colors"
+                    title="Sign out"
                 >
-                    <LogOut size={24} strokeWidth={2} />
+                    <LogOut size={22} />
                 </button>
             </div>
-        </div>
+        </aside>
     );
 }

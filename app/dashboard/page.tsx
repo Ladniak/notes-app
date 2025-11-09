@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import SideNav from "../../components/SideNav";
 
 interface Task {
@@ -29,7 +30,7 @@ export default function DashboardPage() {
         }
         const data = await res.json();
         if (Array.isArray(data)) setTasks(data);
-        else setTasks([]); // безпечний fallback
+        else setTasks([]);
     }
 
     async function handleSubmit(e: React.FormEvent) {
@@ -55,77 +56,122 @@ export default function DashboardPage() {
         fetchTasks();
     }
 
-    async function handleEdit(task: Task) {
+    function handleEdit(task: Task) {
         setEditingTask(task);
         setTitle(task.title);
         setDescription(task.description || "");
     }
 
     return (
-        <div className="flex min-h-screen">
+        <div className="flex min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-100">
             <SideNav />
 
-            <main className="flex-1 p-6 bg-gray-50">
-                <h2 className="text-2xl font-semibold mb-4">Your Tasks</h2>
-
-                <form
-                    onSubmit={handleSubmit}
-                    className="mb-6 space-y-3 bg-white p-4 rounded-lg shadow"
+            <main className="flex-1 p-10">
+                <motion.div
+                    initial={{ opacity: 0, y: -30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="mb-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-2xl shadow-md"
                 >
-                    <input
-                        type="text"
-                        placeholder="Task title"
-                        className="w-full border p-2 rounded"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        required
-                    />
-                    <textarea
-                        placeholder="Description"
-                        className="w-full border p-2 rounded"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                    />
-                    <button
-                        type="submit"
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                    >
-                        {editingTask ? "Update Task" : "Add Task"}
-                    </button>
-                </form>
+                    <h2 className="text-3xl font-bold">Your Tasks</h2>
+                    <p className="text-blue-100 mt-1">
+                        Manage, track and organize your daily goals
+                    </p>
+                </motion.div>
+
+                <motion.form
+                    onSubmit={handleSubmit}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.1, duration: 0.4 }}
+                    className="bg-white rounded-2xl p-6 shadow-md mb-8 border border-gray-200"
+                >
+                    <h3 className="text-xl font-semibold mb-4">
+                        {editingTask ? "Edit Task " : "Add New Task "}
+                    </h3>
+                    <div className="space-y-4">
+                        <input
+                            type="text"
+                            placeholder="Task title"
+                            className="w-full border border-gray-300 p-3 rounded-xl focus:border-blue-500 outline-none transition"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            required
+                        />
+                        <textarea
+                            placeholder="Description (optional)"
+                            className="w-full border border-gray-300 p-3 rounded-xl focus:border-blue-500 outline-none transition"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            rows={3}
+                        />
+                        <button
+                            type="submit"
+                            className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition shadow"
+                        >
+                            {editingTask ? "Save Changes" : "Add Task"}
+                        </button>
+                    </div>
+                </motion.form>
 
                 {tasks.length === 0 ? (
-                    <p className="text-gray-600">No tasks yet.</p>
+                    <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-gray-500 text-center mt-20"
+                    >
+                        No tasks yet. Start by adding your first one
+                    </motion.p>
                 ) : (
-                    <ul className="space-y-3">
+                    <motion.ul
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    >
                         {tasks.map((task) => (
-                            <li
+                            <motion.li
                                 key={task._id}
-                                className="p-4 border rounded-lg bg-white shadow-sm flex justify-between items-center"
+                                whileHover={{ scale: 1.02 }}
+                                className="p-5 bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between transition"
                             >
                                 <div>
-                                    <p className="font-medium text-lg">{task.title}</p>
+                                    <h4 className="text-lg font-semibold mb-2 text-gray-800">
+                                        {task.title}
+                                    </h4>
                                     {task.description && (
-                                        <p className="text-gray-500 text-sm">{task.description}</p>
+                                        <p className="text-gray-600 text-sm mb-4">
+                                            {task.description}
+                                        </p>
                                     )}
+                                    <span
+                                        className={`inline-block text-xs px-3 py-1 rounded-full font-medium ${task.status === "done"
+                                            ? "bg-green-100 text-green-600"
+                                            : task.status === "in-progress"
+                                                ? "bg-yellow-100 text-yellow-600"
+                                                : "bg-gray-100 text-gray-600"
+                                            }`}
+                                    >
+                                        {task.status}
+                                    </span>
                                 </div>
-                                <div className="flex gap-2">
+
+                                <div className="flex gap-3 mt-5">
                                     <button
                                         onClick={() => handleEdit(task)}
-                                        className="text-blue-600 hover:underline"
+                                        className="flex-1 bg-indigo-50 text-indigo-600 font-medium py-2 rounded-xl hover:bg-indigo-100 transition"
                                     >
                                         Edit
                                     </button>
                                     <button
                                         onClick={() => handleDelete(task._id)}
-                                        className="text-red-600 hover:underline"
+                                        className="flex-1 bg-red-50 text-red-600 font-medium py-2 rounded-xl hover:bg-red-100 transition"
                                     >
                                         Delete
                                     </button>
                                 </div>
-                            </li>
+                            </motion.li>
                         ))}
-                    </ul>
+                    </motion.ul>
                 )}
             </main>
         </div>

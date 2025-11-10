@@ -38,7 +38,6 @@ export default function SideNav() {
             </nav>
 
             <div className="p-4  flex items-center justify-between text-gray-600">
-                <span className="text-sm font-medium">Logout</span>
                 <button
                     onClick={handleSignOut}
                     className="p-2 rounded-lg hover:bg-red-100 hover:text-red-600 transition-colors"

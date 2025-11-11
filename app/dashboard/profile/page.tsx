@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import SideNav from "../../../components/SideNav";
+import Button from "@/components/Button";
 
 export default function ProfilePage() {
     const [currentPassword, setCurrentPassword] = useState("");
@@ -105,16 +106,10 @@ export default function ProfilePage() {
                             required
                         />
 
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className={`w-full py-3 rounded-xl font-medium text-white transition ${isLoading
-                                ? "bg-blue-300 cursor-not-allowed"
-                                : "bg-blue-600 hover:bg-blue-700"
-                                }`}
-                        >
+                        <Button type="submit" isLoading={isLoading}>
                             {isLoading ? "Updating..." : "Update Password"}
-                        </button>
+                        </Button>
+
                     </form>
 
                     {message && (

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import SideNav from "../../components/SideNav";
+import Button from "@/components/Button";
 
 interface Task {
     _id: string;
@@ -14,9 +15,6 @@ interface Task {
 export default function DashboardPage() {
     const router = useRouter();
     const [tasks, setTasks] = useState<Task[]>([]);
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [editingTask, setEditingTask] = useState<Task | null>(null);
 
     useEffect(() => {
         fetchTasks();
@@ -29,37 +27,12 @@ export default function DashboardPage() {
             return;
         }
         const data = await res.json();
-        if (Array.isArray(data)) setTasks(data);
-        else setTasks([]);
-    }
-
-    async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
-
-        const method = editingTask ? "PUT" : "POST";
-        const url = editingTask ? `/api/tasks/${editingTask._id}` : "/api/tasks";
-
-        await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title, description, status: "pending" }),
-        });
-
-        setTitle("");
-        setDescription("");
-        setEditingTask(null);
-        fetchTasks();
+        setTasks(Array.isArray(data) ? data : []);
     }
 
     async function handleDelete(id: string) {
         await fetch(`/api/tasks/${id}`, { method: "DELETE" });
         fetchTasks();
-    }
-
-    function handleEdit(task: Task) {
-        setEditingTask(task);
-        setTitle(task.title);
-        setDescription(task.description || "");
     }
 
     return (
@@ -71,48 +44,22 @@ export default function DashboardPage() {
                     initial={{ opacity: 0, y: -30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="mb-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-2xl shadow-md"
+                    className="mb-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-2xl shadow-md flex justify-between items-center"
                 >
-                    <h2 className="text-3xl font-bold">Your Tasks</h2>
-                    <p className="text-blue-100 mt-1">
-                        Manage, track and organize your daily goals
-                    </p>
-                </motion.div>
-
-                <motion.form
-                    onSubmit={handleSubmit}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.1, duration: 0.4 }}
-                    className="bg-white rounded-2xl p-6 shadow-md mb-8 border border-gray-200"
-                >
-                    <h3 className="text-xl font-semibold mb-4">
-                        {editingTask ? "Edit Task " : "Add New Task "}
-                    </h3>
-                    <div className="space-y-4">
-                        <input
-                            type="text"
-                            placeholder="Task title"
-                            className="w-full border border-gray-300 p-3 rounded-xl focus:border-blue-500 outline-none transition"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            required
-                        />
-                        <textarea
-                            placeholder="Description (optional)"
-                            className="w-full border border-gray-300 p-3 rounded-xl focus:border-blue-500 outline-none transition"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            rows={3}
-                        />
-                        <button
-                            type="submit"
-                            className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition shadow"
-                        >
-                            {editingTask ? "Save Changes" : "Add Task"}
-                        </button>
+                    <div>
+                        <h2 className="text-3xl font-bold">Your Tasks</h2>
+                        <p className="text-blue-100 mt-1">
+                            Manage, track and organize your daily goals
+                        </p>
                     </div>
-                </motion.form>
+
+                    <Button
+                        onClick={() => router.push("/task/form")}
+                        className="bg-white text-blue-600 font-semibold hover:bg-blue-50"
+                    >
+                        + Add Task
+                    </Button>
+                </motion.div>
 
                 {tasks.length === 0 ? (
                     <motion.p
@@ -156,18 +103,23 @@ export default function DashboardPage() {
                                 </div>
 
                                 <div className="flex gap-3 mt-5">
-                                    <button
-                                        onClick={() => handleEdit(task)}
-                                        className="flex-1 bg-indigo-50 text-indigo-600 font-medium py-2 rounded-xl hover:bg-indigo-100 transition"
+                                    <Button
+                                        onClick={() =>
+                                            router.push(`/task/form?id=${task._id}`)
+                                        }
+                                        variant="secondary"
+                                        className="flex-1 text-indigo-600 bg-indigo-50 hover:bg-indigo-100"
                                     >
                                         Edit
-                                    </button>
-                                    <button
+                                    </Button>
+
+                                    <Button
                                         onClick={() => handleDelete(task._id)}
-                                        className="flex-1 bg-red-50 text-red-600 font-medium py-2 rounded-xl hover:bg-red-100 transition"
+                                        variant="danger"
+                                        className="flex-1 text-red-600 bg-red-50 hover:bg-red-100"
                                     >
                                         Delete
-                                    </button>
+                                    </Button>
                                 </div>
                             </motion.li>
                         ))}
@@ -177,3 +129,4 @@ export default function DashboardPage() {
         </div>
     );
 }
+

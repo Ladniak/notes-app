@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import SideNav from "@/components/SideNav";
 
@@ -12,10 +12,8 @@ interface TaskForm {
     dueDate: string;
 }
 
-export default function TaskPage() {
+export default function CreateTaskPage() {
     const router = useRouter();
-    const { id } = useParams();
-    const isEditing = !!id;
     const [form, setForm] = useState<TaskForm>({
         title: "",
         description: "",
@@ -24,29 +22,6 @@ export default function TaskPage() {
         dueDate: "",
     });
     const [isLoading, setIsLoading] = useState(false);
-
-    useEffect(() => {
-        if (!id) return;
-
-        const fetchTask = async () => {
-            try {
-                const res = await fetch(`/api/tasks/${id}`);
-                if (!res.ok) throw new Error("Failed to fetch task");
-                const data = await res.json();
-                setForm({
-                    title: data.title || "",
-                    description: data.description || "",
-                    status: data.status || "pending",
-                    priority: data.priority || "medium",
-                    dueDate: data.dueDate ? data.dueDate.split("T")[0] : "",
-                });
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchTask();
-    }, [id]);
 
     const handleChange = (
         e: React.ChangeEvent<
@@ -59,11 +34,9 @@ export default function TaskPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        const method = isEditing ? "PUT" : "POST";
-        const url = isEditing ? `/api/tasks/${id}` : "/api/tasks";
 
-        await fetch(url, {
-            method,
+        await fetch("/api/tasks", {
+            method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(form),
         });
@@ -77,7 +50,7 @@ export default function TaskPage() {
             <SideNav />
             <main className="flex-1 bg-gray-50 p-6">
                 <h2 className="text-3xl font-bold mb-6 text-gray-800">
-                    {isEditing ? "Edit Task" : "Create New Task"}
+                    Create New Task
                 </h2>
 
                 <form
@@ -135,11 +108,10 @@ export default function TaskPage() {
                     />
 
                     <Button type="submit" isLoading={isLoading}>
-                        {isEditing ? "Save Changes" : "Create Task"}
+                        Create Task
                     </Button>
                 </form>
             </main>
         </div>
     );
 }
-

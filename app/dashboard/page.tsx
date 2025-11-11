@@ -105,7 +105,7 @@ export default function DashboardPage() {
                                 <div className="flex gap-3 mt-5">
                                     <Button
                                         onClick={() =>
-                                            router.push(`/task/form?id=${task._id}`)
+                                            router.push(`/task/${task._id}`)
                                         }
                                         variant="secondary"
                                         className="flex-1 text-indigo-600 bg-indigo-50 hover:bg-indigo-100"

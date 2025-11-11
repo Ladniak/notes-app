@@ -6,9 +6,7 @@ A web application for creating, editing, and organizing personal notes with a si
 
 - Create and delete notes
 - Edit existing notes
-- Filter and search by title or content
 - Responsive design for all devices
-- Data persistence in local storage
 
 ## Installation
 

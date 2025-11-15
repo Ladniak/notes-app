@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import SideNav from "../../../components/SideNav";
 import Button from "@/components/Button";
+import { PieChart, Pie, Tooltip, Cell, Legend } from "recharts";
 
 export default function ProfilePage() {
     const [currentPassword, setCurrentPassword] = useState("");
@@ -61,6 +62,15 @@ export default function ProfilePage() {
         setIsLoading(false);
     };
 
+    const chartData = [
+        { name: "Completed", value: stats.completed },
+        { name: "In Progress", value: stats.inProgress },
+        { name: "Pending", value: stats.pending },
+    ];
+
+    const COLORS = ["#1edc10ff", "#eaff00ff", "#004aa5ff"];
+
+
     return (
         <div className="flex min-h-screen bg-gray-50">
             <SideNav />
@@ -87,52 +97,76 @@ export default function ProfilePage() {
                 </div>
 
 
-                <section className="bg-white p-8 rounded-2xl shadow-md max-w-lg border border-gray-100">
-                    <h3 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
-                        Change Password
-                    </h3>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-10">
+                    <section className="bg-white p-8 rounded-2xl shadow-md border border-gray-100">
+                        <h3 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
+                            Change Password
+                        </h3>
 
-                    <form onSubmit={handlePasswordChange} className="space-y-5">
-                        <input
-                            type="password"
-                            placeholder="Current password"
-                            className="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            value={currentPassword}
-                            onChange={(e) => setCurrentPassword(e.target.value)}
-                            required
-                        />
-                        <input
-                            type="password"
-                            placeholder="New password"
-                            className="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            required
-                        />
-                        <input
-                            type="password"
-                            placeholder="Confirm new password"
-                            className="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            required
-                        />
+                        <form onSubmit={handlePasswordChange} className="space-y-5">
+                            <input
+                                type="password"
+                                placeholder="Current password"
+                                className="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                value={currentPassword}
+                                onChange={(e) => setCurrentPassword(e.target.value)}
+                                required
+                            />
+                            <input
+                                type="password"
+                                placeholder="New password"
+                                className="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                required
+                            />
+                            <input
+                                type="password"
+                                placeholder="Confirm new password"
+                                className="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                required
+                            />
 
-                        <Button type="submit" isLoading={isLoading}>
-                            {isLoading ? "Updating..." : "Update Password"}
-                        </Button>
+                            <Button type="submit" isLoading={isLoading}>
+                                {isLoading ? "Updating..." : "Update Password"}
+                            </Button>
+                        </form>
 
-                    </form>
+                        {message && (
+                            <p
+                                className={`mt-4 text-center font-medium ${message.includes("Ok") ? "text-green-600" : "text-red-600"
+                                    }`}
+                            >
+                                {message}
+                            </p>
+                        )}
+                    </section>
 
-                    {message && (
-                        <p
-                            className={`mt-4 text-center font-medium ${message.includes("Ok") ? "text-green-600" : "text-red-600"
-                                }`}
-                        >
-                            {message}
-                        </p>
-                    )}
-                </section>
+                    <section className="bg-white p-8 rounded-2xl shadow-md border border-gray-100 flex items-center justify-center">
+                        <PieChart width={350} height={350}>
+                            <Pie
+                                data={chartData}
+                                dataKey="value"
+                                nameKey="name"
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={70}
+                                outerRadius={120}
+                                paddingAngle={4}
+                            >
+                                {chartData.map((entry, index) => (
+                                    <Cell key={index} fill={COLORS[index]} />
+                                ))}
+                            </Pie>
+
+                            <Tooltip />
+                            <Legend />
+                        </PieChart>
+                    </section>
+
+                </div>
             </main>
         </div>
     );

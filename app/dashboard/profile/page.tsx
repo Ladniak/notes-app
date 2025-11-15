@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import SideNav from "../../../components/SideNav";
 import Button from "@/components/Button";
@@ -12,12 +12,23 @@ export default function ProfilePage() {
 
     const [isLoading, setIsLoading] = useState(false);
 
-    const userStats = {
-        totalTasks: 28,
-        completedTasks: 17,
-        inProgressTasks: 6,
-        pendingTasks: 5,
-    };
+    const [stats, setStats] = useState({
+        total: 0,
+        completed: 0,
+        inProgress: 0,
+        pending: 0,
+    });
+
+    useEffect(() => {
+        fetch("/api/users/stats")
+            .then(res => res.json())
+            .then(data => {
+                if (!data.message) {
+                    setStats(data);
+                }
+            });
+    }, []);
+
 
     const handlePasswordChange = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -59,10 +70,10 @@ export default function ProfilePage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                     {[
-                        { label: "Total Tasks", value: userStats.totalTasks, color: "text-blue-600" },
-                        { label: "Completed", value: userStats.completedTasks, color: "text-green-600" },
-                        { label: "In Progress", value: userStats.inProgressTasks, color: "text-yellow-600" },
-                        { label: "Pending", value: userStats.pendingTasks, color: "text-red-600" },
+                        { label: "Total Tasks", value: stats.total, color: "text-blue-600" },
+                        { label: "Completed", value: stats.completed, color: "text-green-600" },
+                        { label: "In Progress", value: stats.inProgress, color: "text-yellow-600" },
+                        { label: "Pending", value: stats.pending, color: "text-red-600" },
                     ].map((stat) => (
                         <motion.div
                             key={stat.label}
@@ -74,6 +85,7 @@ export default function ProfilePage() {
                         </motion.div>
                     ))}
                 </div>
+
 
                 <section className="bg-white p-8 rounded-2xl shadow-md max-w-lg border border-gray-100">
                     <h3 className="text-2xl font-semibold mb-6 text-gray-800 text-center">

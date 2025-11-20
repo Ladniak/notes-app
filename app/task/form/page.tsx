@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import SideNav from "@/components/SideNav";
+import Image from "next/image";
 
 interface TaskForm {
     title: string;
@@ -24,9 +25,7 @@ export default function CreateTaskPage() {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (
-        e: React.ChangeEvent<
-            HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-        >
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
@@ -46,71 +45,89 @@ export default function CreateTaskPage() {
     };
 
     return (
-        <div className="flex min-h-screen">
+        <div className="flex min-h-screen bg-gray-50">
             <SideNav />
-            <main className="flex-1 bg-gray-50 p-6">
-                <h2 className="text-3xl font-bold mb-6 text-gray-800">
-                    Create New Task
-                </h2>
 
-                <form
-                    onSubmit={handleSubmit}
-                    className="bg-white p-6 rounded-2xl shadow-md space-y-4 max-w-lg"
-                >
-                    <input
-                        name="title"
-                        type="text"
-                        placeholder="Task title"
-                        className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-blue-500"
-                        value={form.title}
-                        onChange={handleChange}
-                        required
-                    />
+            <main className="flex-1 flex items-center justify-center p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full max-w-5xl">
 
-                    <textarea
-                        name="description"
-                        placeholder="Description"
-                        className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-blue-500"
-                        value={form.description}
-                        onChange={handleChange}
-                    />
+                    {/* Form */}
+                    <form
+                        onSubmit={handleSubmit}
+                        className="bg-white p-10 rounded-3xl shadow-lg space-y-5 w-full"
+                    >
+                        <h2 className="text-3xl font-bold mb-4 text-gray-800">
+                            Create New Task
+                        </h2>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <select
-                            name="status"
-                            className="border p-3 rounded-xl focus:ring-2 focus:ring-blue-500"
-                            value={form.status}
+                        <input
+                            name="title"
+                            type="text"
+                            placeholder="Task title"
+                            className="w-full p-3 rounded-xl bg-gray-100 focus:bg-white shadow-sm focus:ring-2 focus:ring-blue-400 transition"
+                            value={form.title}
                             onChange={handleChange}
-                        >
-                            <option value="pending">Pending</option>
-                            <option value="in-progress">In progress</option>
-                            <option value="done">Done</option>
-                        </select>
+                            required
+                        />
 
-                        <select
-                            name="priority"
-                            className="border p-3 rounded-xl focus:ring-2 focus:ring-blue-500"
-                            value={form.priority}
+                        <textarea
+                            name="description"
+                            placeholder="Description"
+                            className="w-full p-3 rounded-xl bg-gray-100 focus:bg-white shadow-sm focus:ring-2 focus:ring-blue-400 transition"
+                            rows={4}
+                            value={form.description}
                             onChange={handleChange}
-                        >
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
-                        </select>
+                        />
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <select
+                                name="status"
+                                className="p-3 rounded-xl bg-gray-100 focus:bg-white shadow-sm focus:ring-2 focus:ring-blue-400 transition"
+                                value={form.status}
+                                onChange={handleChange}
+                            >
+                                <option value="pending">Pending</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="done">Done</option>
+                            </select>
+
+                            <select
+                                name="priority"
+                                className="p-3 rounded-xl bg-gray-100 focus:bg-white shadow-sm focus:ring-2 focus:ring-blue-400 transition"
+                                value={form.priority}
+                                onChange={handleChange}
+                            >
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+
+                        <input
+                            name="dueDate"
+                            type="date"
+                            className="w-full p-3 rounded-xl bg-gray-100 focus:bg-white shadow-sm focus:ring-2 focus:ring-blue-400 transition"
+                            value={form.dueDate}
+                            onChange={handleChange}
+                        />
+
+                        <Button type="submit" isLoading={isLoading}>
+                            Create Task
+                        </Button>
+                    </form>
+
+                    {/* Illustration */}
+                    <div className="hidden lg:flex justify-center">
+                        <Image
+                            src="/images/task-side.png"
+                            alt="Create task illustration"
+                            width={420}
+                            height={420}
+                            className="rounded-2xl shadow-md object-contain"
+                        />
                     </div>
 
-                    <input
-                        name="dueDate"
-                        type="date"
-                        className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-blue-500"
-                        value={form.dueDate}
-                        onChange={handleChange}
-                    />
-
-                    <Button type="submit" isLoading={isLoading}>
-                        Create Task
-                    </Button>
-                </form>
+                </div>
             </main>
         </div>
     );

@@ -15,6 +15,7 @@ interface Task {
 export default function DashboardPage() {
     const router = useRouter();
     const [tasks, setTasks] = useState<Task[]>([]);
+    const [menuOpen, setMenuOpen] = useState(false);
 
     useEffect(() => {
         fetchTasks();
@@ -37,14 +38,29 @@ export default function DashboardPage() {
 
     return (
         <div className="flex min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-100">
-            <SideNav />
+            <button
+                onClick={() => setMenuOpen(true)}
+                className="
+                                lg:hidden fixed top-4 left-4 
+                                bg-white p-3 rounded-xl shadow-md border border-gray-200
+                            "
+            >
+                ☰
+            </button>
+
+
+            <SideNav isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
 
             <main className="flex-1 p-10">
                 <motion.div
                     initial={{ opacity: 0, y: -30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="mb-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-2xl shadow-md flex justify-between items-center"
+                    className="
+                        mb-8 bg-gradient-to-r from-blue-600 to-indigo-600 
+                        text-white p-6 rounded-2xl shadow-md
+                        flex justify-between items-center
+                    "
                 >
                     <div>
                         <h2 className="text-3xl font-bold">Your Tasks</h2>
@@ -79,17 +95,22 @@ export default function DashboardPage() {
                             <motion.li
                                 key={task._id}
                                 whileHover={{ scale: 1.02 }}
-                                className="p-5 bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between transition"
+                                className="
+                                    p-5 bg-white rounded-2xl border border-gray-200 
+                                    shadow-sm flex flex-col justify-between transition
+                                "
                             >
                                 <div>
                                     <h4 className="text-lg font-semibold mb-2 text-gray-800">
                                         {task.title}
                                     </h4>
+
                                     {task.description && (
                                         <p className="text-gray-600 text-sm mb-4">
                                             {task.description}
                                         </p>
                                     )}
+
                                     <span
                                         className={`inline-block text-xs px-3 py-1 rounded-full font-medium ${task.status === "done"
                                             ? "bg-green-100 text-green-600"
@@ -104,9 +125,7 @@ export default function DashboardPage() {
 
                                 <div className="flex gap-3 mt-5">
                                     <Button
-                                        onClick={() =>
-                                            router.push(`/task/${task._id}`)
-                                        }
+                                        onClick={() => router.push(`/task/${task._id}`)}
                                         variant="secondary"
                                         className="flex-1 text-indigo-600 bg-indigo-50 hover:bg-indigo-100"
                                     >
@@ -129,4 +148,3 @@ export default function DashboardPage() {
         </div>
     );
 }
-

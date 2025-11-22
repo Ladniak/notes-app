@@ -10,8 +10,9 @@ export default function ProfilePage() {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [message, setMessage] = useState("");
-
     const [isLoading, setIsLoading] = useState(false);
+
+    const [menuOpen, setMenuOpen] = useState(false);
 
     const [stats, setStats] = useState({
         total: 0,
@@ -22,14 +23,11 @@ export default function ProfilePage() {
 
     useEffect(() => {
         fetch("/api/users/stats")
-            .then(res => res.json())
-            .then(data => {
-                if (!data.message) {
-                    setStats(data);
-                }
+            .then((res) => res.json())
+            .then((data) => {
+                if (!data.message) setStats(data);
             });
     }, []);
-
 
     const handlePasswordChange = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -70,10 +68,20 @@ export default function ProfilePage() {
 
     const COLORS = ["#1edc10ff", "#eaff00ff", "#004aa5ff"];
 
-
     return (
         <div className="flex min-h-screen bg-gray-50">
-            <SideNav />
+
+            <button
+                onClick={() => setMenuOpen(true)}
+                className="
+                    lg:hidden fixed top-4 left-4
+                    bg-white p-3 rounded-xl shadow-md 
+                "
+            >
+                ☰
+            </button>
+
+            <SideNav isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
 
             <main className="flex-1 p-8">
                 <h2 className="text-3xl font-bold mb-8 text-gray-800">Profile</h2>
@@ -96,7 +104,6 @@ export default function ProfilePage() {
                     ))}
                 </div>
 
-
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-10">
                     <section className="bg-white p-8 rounded-2xl shadow-md border border-gray-100">
                         <h3 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
@@ -107,7 +114,7 @@ export default function ProfilePage() {
                             <input
                                 type="password"
                                 placeholder="Current password"
-                                className="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-blue-500"
                                 value={currentPassword}
                                 onChange={(e) => setCurrentPassword(e.target.value)}
                                 required
@@ -115,7 +122,7 @@ export default function ProfilePage() {
                             <input
                                 type="password"
                                 placeholder="New password"
-                                className="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-blue-500"
                                 value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
                                 required
@@ -123,7 +130,7 @@ export default function ProfilePage() {
                             <input
                                 type="password"
                                 placeholder="Confirm new password"
-                                className="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-blue-500"
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 required
@@ -145,15 +152,15 @@ export default function ProfilePage() {
                     </section>
 
                     <section className="bg-white p-8 rounded-2xl shadow-md border border-gray-100 flex items-center justify-center">
-                        <PieChart width={350} height={350}>
+                        <PieChart width={300} height={300}>
                             <Pie
                                 data={chartData}
                                 dataKey="value"
                                 nameKey="name"
                                 cx="50%"
                                 cy="50%"
-                                innerRadius={70}
-                                outerRadius={120}
+                                innerRadius={60}
+                                outerRadius={100}
                                 paddingAngle={4}
                             >
                                 {chartData.map((entry, index) => (
@@ -165,7 +172,6 @@ export default function ProfilePage() {
                             <Legend />
                         </PieChart>
                     </section>
-
                 </div>
             </main>
         </div>
